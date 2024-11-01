@@ -1,0 +1,37 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main  # 监听主分支的推送事件
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js (可选，根据你的项目需要)
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # 指定 Node.js 版本
+
+      - name: Install dependencies (可选，根据你的项目需要)
+        run: npm install  # 或者其他依赖安装命令
+
+      - name: Get current date
+        id: get_date
+        run: echo "current_date=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ env.current_date }}"
+          release_name: "Release v${{ env.current_date }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
